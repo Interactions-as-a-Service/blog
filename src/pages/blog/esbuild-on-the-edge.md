@@ -198,7 +198,19 @@ console.log(a);
 Possible improvements to this worker could include:
 - Adding a cache for the bundled code, so that if the same file is requested twice, it doesn't need to be bundled again. Something like Cloudflare's KV could be used for this.
 - Adding a way to specify the entrypoint of the application, rather than hardcoding it to index.ts
-- Using user code as the entrypoint, rather than a file tree
+- Using user code as the entrypoint, rather than your own file tree (this has potential with [Workers for Platforms](https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/), for example)
+
+### Notes
+This is mostly intended as a proof of concept, as there are a few caveats to using this approach:
+- This requires an Unbound worker, as it uses around 20-30 ms of CPU time to run this demo, however spikes up to around 70ms on the 99th percentile. There's very little that can be done to reduce this, as esbuild-wasm is significantly less performant than esbuild's native binary.
+- This demo has extremely limited functionality, and is not intended to be used in production. It's only intended to be used as a proof of concept, and to show that it is possible to run esbuild in a worker.
+- Your worker is unlikely to receive the full benefits of running on Cloudflare's edge, due to the fact that scripts which are over 1MiB in size (~2.8MiB in this case) are likely to be evicted from Cloudflare Colos when not recently requested, and will need to be re-fetched from the Worker's Core Colos in this event. It may be more performant to instead run Esbuild on your own server.
+
+There are some benefits to using this approach, however:
+- You can run esbuild on Cloudflare's edge, which means that you can bundle your code without having to send it to a third party server.
+- You can use Cloudflare's KV to cache the bundled code, so that if the same file is requested twice, it doesn't need to be bundled again.
+- For those not willing to deal with hosting a server, this alternative is a good option.
+- This approach does not have any access to File Systems, so there is no risk of a malicious script managing to escape Esbuild's bundling, and accessing any sensitive content.
 
 ### Conclusion
 

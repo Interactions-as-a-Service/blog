@@ -1,7 +1,7 @@
 <script>
   const elements = document.querySelectorAll('.fade-in');
   let observer = new IntersectionObserver(
-    (changes, observer) => {
+    (changes) => {
       let timeout = 0;
       changes.forEach((change) => {
         if (change.intersectionRatio > 0) {
