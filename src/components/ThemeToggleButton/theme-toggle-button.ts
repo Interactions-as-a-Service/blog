@@ -73,10 +73,10 @@ export class ThemeToggleButton extends LitElement {
         title=${`Enable ${this.theme === 'dark' ? 'Light' : 'Dark'} Theme`}
       >
         ${this.theme === 'dark'
-          ? html`
+        ? html`
               ${lightThemeIcon}
             `
-          : html`
+        : html`
               ${darkThemeIcon}
             `}
       </button>

@@ -3,7 +3,7 @@ layout: '../../layouts/Post.astro'
 title: Running Esbuild on the Edge
 image: /images/esbuild-edge/icon
 publishedAt: 2022-11-17
-category: 'Cloudflare Workers'
+category: 'Cloudflare Workers, WebAssembly'
 ---
 
 ### What is Esbuild?
@@ -118,46 +118,47 @@ console.log(a);`;
 ```
 
 Now, when we visit our worker, we should see the following code, having been bundled and minified:
+
 ```js
 console.log(1);
 ```
 
 ### How do we make this more useful?
 
-While the above code *works* - we can make this more useful by adding a few more features. Let's start by implementing a file system in our worker. You can use something more complicated for resolving files if you wish, for example dealing with node modules, URL imports etc. - but for the purposes of this demo, we'll just use a simple object.
+While the above code _works_ - we can make this more useful by adding a few more features. Let's start by implementing a file system in our worker. You can use something more complicated for resolving files if you wish, for example dealing with node modules, URL imports etc. - but for the purposes of this demo, we'll just use a simple object.
 
 ```ts
-type File = { content: string }
+type File = { content: string };
 
 const fileTree: Record<string, File> = {
-	"index.ts": {
+	'index.ts': {
 		content: `import { a } from "./a.ts";
 		console.log(a);`,
 	},
-	"./a.ts": {
+	'./a.ts': {
 		content: `export const a: number = 1;`,
-	}
-}
+	},
+};
 ```
 
 Now, we need to make an esbuild plugin for accessing this file tree that we've created. This might look something like the following:
 
 ```ts
 const fileTreePlugin: esbuild.Plugin = {
-	name: "file-tree",
+	name: 'file-tree',
 	setup(build) {
 		build.onResolve({ filter: /.*/ }, (args) => {
-			return { path: args.path, namespace: "file-tree" };
+			return { path: args.path, namespace: 'file-tree' };
 		});
-		build.onLoad({ filter: /.*/, namespace: "file-tree" }, (args) => {
+		build.onLoad({ filter: /.*/, namespace: 'file-tree' }, (args) => {
 			const file = fileTree[args.path];
-			if(!file) throw new Error(`File not found: ${args.path}`);
+			if (!file) throw new Error(`File not found: ${args.path}`);
 			return {
 				contents: file.content,
-				loader: "ts",
+				loader: 'ts',
 			};
 		});
-	}
+	},
 };
 ```
 
@@ -170,17 +171,18 @@ const result = await esbuild.build({
 	bundle: true,
 	write: false,
 	stdin: {
-		contents: fileTree["index.ts"].content,
-		sourcefile: "index.ts",
+		contents: fileTree['index.ts'].content,
+		sourcefile: 'index.ts',
 	},
-	format: "esm",
-	target: "es2022",
+	format: 'esm',
+	target: 'es2022',
 	loader: {
-		".ts": "ts",
+		'.ts': 'ts',
 	},
 	plugins: [fileTreePlugin],
 });
 ```
+
 Key changes here: For this demo we've set the contents of stdin to the contents of the index.ts file from our file tree, and we've added the plugin to the plugins array.
 
 If you run your worker again when visiting it, you should see something like the following output:
@@ -196,17 +198,21 @@ console.log(a);
 ### How do we make this even more useful?
 
 Possible improvements to this worker could include:
+
 - Adding a cache for the bundled code, so that if the same file is requested twice, it doesn't need to be bundled again. Something like Cloudflare's KV could be used for this.
 - Adding a way to specify the entrypoint of the application, rather than hardcoding it to index.ts
 - Using user code as the entrypoint, rather than your own file tree (this has potential with [Workers for Platforms](https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/), for example)
 
 ### Notes
+
 This is mostly intended as a proof of concept, as there are a few caveats to using this approach:
+
 - This requires an Unbound worker, as it uses around 20-30 ms of CPU time to run this demo, however spikes up to around 70ms on the 99th percentile. There's very little that can be done to reduce this, as esbuild-wasm is significantly less performant than esbuild's native binary.
 - This demo has extremely limited functionality, and is not intended to be used in production. It's only intended to be used as a proof of concept, and to show that it is possible to run esbuild in a worker.
 - Your worker is unlikely to receive the full benefits of running on Cloudflare's edge, due to the fact that scripts which are over 1MiB in size (~2.8MiB in this case) are likely to be evicted from Cloudflare Colos when not recently requested, and will need to be re-fetched from the Worker's Core Colos in this event. It may be more performant to instead run Esbuild on your own server.
 
 There are some benefits to using this approach, however:
+
 - You can run esbuild on Cloudflare's edge, which means that you can bundle your code without having to send it to a third party server.
 - You can use Cloudflare's KV to cache the bundled code, so that if the same file is requested twice, it doesn't need to be bundled again.
 - For those not willing to deal with hosting a server, this alternative is a good option.
@@ -214,7 +220,7 @@ There are some benefits to using this approach, however:
 
 ### Conclusion
 
-This demo is just showcasing some of the potential of esbuild, and how it can be used to bundle code in a worker. It's not meant to be a production-ready solution, but rather a proof of concept. I hope you've enjoyed this article, and I hope you've learned something new. If you have any questions, feel free to reach out to me on the [Interactions.Rest Discord](https://discord.gg/j22RkU7eBr). 
+This demo is just showcasing some of the potential of esbuild, and how it can be used to bundle code in a worker. It's not meant to be a production-ready solution, but rather a proof of concept. I hope you've enjoyed this article, and I hope you've learned something new. If you have any questions, feel free to reach out to me on the [Interactions.Rest Discord](https://discord.gg/j22RkU7eBr).
 
 The code for this demo can be found [here](https://github.com/Interactions-as-a-Service/esbuild-worker-demo).
 
