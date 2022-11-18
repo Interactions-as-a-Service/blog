@@ -14,7 +14,8 @@ export interface Props {
 const title = Astro.props.title || settings.title;
 const description = Astro.props.description || settings.description;
 const canonicalURL = Astro.props.canonicalURL || new URL(Astro.url.pathname, Astro.site);
-const image = new URL(Astro.props.image || './social.png', Astro.site);
+const imageBase = new URL(Astro.props.image || './social.png', Astro.site);
+const image = imageBase.href.match(/\.(png|jpg|jpeg|gif|webp|svg)$/i) ? imageBase.href : imageBase.href + '.png';
 ---
 
 <meta charset="utf-8" />
@@ -28,7 +29,7 @@ const image = new URL(Astro.props.image || './social.png', Astro.site);
 <meta name="description" content={description || settings.description} />
 <meta name="generator" content={Astro.generator} />
 <!-- settingsmap -->
-<link rel="sitemap" href="/sitemap.xml">
+<link rel="sitemap" href="/sitemap-index.xml">
 <!-- RSS -->
 <link rel="alternate" type="application/rss+xml" title={`${settings.name} Blog`} href={`${settings.site}/feed/blog.xml`}/>
 <!-- Canonical -->
