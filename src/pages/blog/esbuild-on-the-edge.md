@@ -26,7 +26,7 @@ npx wrangler init
 
 Then you can follow the steps to set up your project. This guide will use TypeScript, but you can use JavaScript if you prefer. This will look something like the following
 
-![Wrangler init](/images/esbuild-edge/wranglerinit.png)
+![Wrangler init](/images/shared/wranglerinit.png)
 
 Now, let's navigate to your `src/index.ts` file, and replace the contents with the following:
 
