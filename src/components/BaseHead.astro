@@ -1,8 +1,8 @@
 ---
-import { settings } from '../data/settings';
+import { settings } from "../data/settings";
 
-import '../styles/reset.css';
-import '../styles/main.css';
+import "../styles/reset.css";
+import "../styles/main.css";
 
 export interface Props {
 	title?: string;
@@ -15,10 +15,10 @@ const title = Astro.props.title || settings.title;
 const description = Astro.props.description || settings.description;
 const canonicalURL =
 	Astro.props.canonicalURL || new URL(Astro.url.pathname, Astro.site);
-const imageBase = new URL(Astro.props.image || './social.png', Astro.site);
+const imageBase = new URL(Astro.props.image || "./social.png", Astro.site);
 const image = imageBase.href.match(/\.(png|jpg|jpeg|gif|webp|svg)$/i)
 	? imageBase.href
-	: imageBase.href + '.png';
+	: imageBase.href + ".png";
 ---
 
 <meta charset="utf-8" />

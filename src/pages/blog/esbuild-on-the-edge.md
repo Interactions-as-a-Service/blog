@@ -1,9 +1,9 @@
 ---
-layout: '../../layouts/Post.astro'
+layout: "../../layouts/Post.astro"
 title: Running Esbuild on the Edge
 image: /images/esbuild-edge/icon
 publishedAt: 2022-11-17
-category: 'Cloudflare Workers, WebAssembly'
+category: "Cloudflare Workers, WebAssembly"
 ---
 
 ### What is Esbuild?
@@ -31,8 +31,8 @@ Then you can follow the steps to set up your project. This guide will use TypeSc
 Now, let's navigate to your `src/index.ts` file, and replace the contents with the following:
 
 ```ts
-import esbuild from 'esbuild-wasm';
-import wasm from '../node_modules/esbuild-wasm/esbuild.wasm';
+import esbuild from "esbuild-wasm";
+import wasm from "../node_modules/esbuild-wasm/esbuild.wasm";
 
 let initialised = false;
 globalThis.performance = Date;
@@ -46,7 +46,7 @@ export default {
 			});
 			initialised = true;
 		}
-		return new Response('Hello World');
+		return new Response("Hello World");
 	},
 };
 ```
@@ -63,7 +63,7 @@ declare namespace globalThis {
 	var performance: typeof Date;
 }
 
-declare module '*.wasm' {
+declare module "*.wasm" {
 	const value: WebAssembly.Module;
 	export default value;
 }
@@ -131,11 +131,11 @@ While the above code _works_ - we can make this more useful by adding a few more
 type File = { content: string };
 
 const fileTree: Record<string, File> = {
-	'index.ts': {
+	"index.ts": {
 		content: `import { a } from "./a.ts";
 		console.log(a);`,
 	},
-	'./a.ts': {
+	"./a.ts": {
 		content: `export const a: number = 1;`,
 	},
 };
@@ -145,17 +145,17 @@ Now, we need to make an esbuild plugin for accessing this file tree that we've c
 
 ```ts
 const fileTreePlugin: esbuild.Plugin = {
-	name: 'file-tree',
+	name: "file-tree",
 	setup(build) {
 		build.onResolve({ filter: /.*/ }, (args) => {
-			return { path: args.path, namespace: 'file-tree' };
+			return { path: args.path, namespace: "file-tree" };
 		});
-		build.onLoad({ filter: /.*/, namespace: 'file-tree' }, (args) => {
+		build.onLoad({ filter: /.*/, namespace: "file-tree" }, (args) => {
 			const file = fileTree[args.path];
 			if (!file) throw new Error(`File not found: ${args.path}`);
 			return {
 				contents: file.content,
-				loader: 'ts',
+				loader: "ts",
 			};
 		});
 	},
@@ -171,13 +171,13 @@ const result = await esbuild.build({
 	bundle: true,
 	write: false,
 	stdin: {
-		contents: fileTree['index.ts'].content,
-		sourcefile: 'index.ts',
+		contents: fileTree["index.ts"].content,
+		sourcefile: "index.ts",
 	},
-	format: 'esm',
-	target: 'es2022',
+	format: "esm",
+	target: "es2022",
 	loader: {
-		'.ts': 'ts',
+		".ts": "ts",
 	},
 	plugins: [fileTreePlugin],
 });

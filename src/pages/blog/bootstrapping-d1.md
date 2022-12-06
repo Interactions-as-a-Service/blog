@@ -1,9 +1,9 @@
 ---
-layout: '../../layouts/Post.astro'
+layout: "../../layouts/Post.astro"
 title: Bootstrapping your D1 Database With D1-ORM
 image: /images/bootstrap-d1/icon
 publishedAt: 2022-11-18
-category: 'Cloudflare Workers, D1, SQL'
+category: "Cloudflare Workers, D1, SQL"
 ---
 
 ### What is D1?
@@ -61,7 +61,7 @@ interface Env {
 
 export default {
 	async fetch(req: Request, env: Env) {
-		const result = await env.DB.execute('SELECT * FROM users');
+		const result = await env.DB.execute("SELECT * FROM users");
 		return Response.json(result);
 	},
 };
@@ -98,7 +98,7 @@ You can also use yarn or PNPM if you prefer.
 D1-ORM is a library that allows you to interact with your D1 database using TypeScript. It's dependency free, and takes full advantage of TypeScript's type system to ensure that your queries are type safe. We'll start by creating an ORM instance.
 
 ```ts
-import { D1Orm } from 'd1-orm';
+import { D1Orm } from "d1-orm";
 
 //... your other code
 const orm = new D1Orm(env.DB);
@@ -107,16 +107,16 @@ const orm = new D1Orm(env.DB);
 Now, let's create a Model for our `users` table. Models are classes that represent a table in your database.
 
 ```ts
-import { Model } from 'd1-orm';
+import { Model } from "d1-orm";
 
 //... your other code
 const users = new Model(
 	{
 		D1Orm: orm,
-		tableName: 'users',
-		primaryKeys: 'id',
-		autoIncrement: 'id',
-		uniqueKeys: [['email']],
+		tableName: "users",
+		primaryKeys: "id",
+		autoIncrement: "id",
+		uniqueKeys: [["email"]],
 	},
 	{
 		id: {
@@ -126,7 +126,7 @@ const users = new Model(
 		name: {
 			type: DataTypes.TEXT,
 			notNull: true,
-			defaultValue: 'John Doe',
+			defaultValue: "John Doe",
 		},
 		email: {
 			type: DataTypes.TEXT,
@@ -153,7 +153,7 @@ The second parameter of this class dictates the structure of the table. This is 
 For those using TypeScript, we can automatically infer a type from our Model using the `Infer` type alias. This will allow us to have a type that's always up to date with our database schema.
 
 ```ts
-import type { Infer } from 'd1-orm';
+import type { Infer } from "d1-orm";
 
 //... your other code
 type User = Infer<typeof users>;

@@ -1,6 +1,6 @@
 ---
 const { post } = Astro.props;
-import { formatDate } from '../utils/helpers';
+import { formatDate } from "../utils/helpers";
 ---
 
 <a class="post-preview__link fade-in" href={post.url}>
@@ -18,7 +18,7 @@ import { formatDate } from '../utils/helpers';
 			{
 				post.frontmatter?.category && (
 					<div>
-						{post.frontmatter.category.split(',').map((category) => (
+						{post.frontmatter.category.split(",").map((category) => (
 							<span class="post-preview__category">{category.trim()}</span>
 						))}
 					</div>

@@ -1,5 +1,5 @@
 <script>
-	const elements = document.querySelectorAll('.fade-in');
+	const elements = document.querySelectorAll(".fade-in");
 	let observer = new IntersectionObserver(
 		(changes) => {
 			let timeout = 0;
@@ -7,19 +7,19 @@
 				if (change.intersectionRatio > 0) {
 					timeout += 100;
 					setTimeout(() => {
-						change.target.setAttribute('data-state', 'visible');
+						change.target.setAttribute("data-state", "visible");
 					}, timeout);
 				}
 			});
 		},
 		{
 			root: null,
-			rootMargin: '0px',
+			rootMargin: "0px",
 			threshold: 0.2,
 		}
 	);
 	elements.forEach((element) => {
-		element.setAttribute('data-state', 'hidden');
+		element.setAttribute("data-state", "hidden");
 		observer.observe(element);
 	});
 </script>

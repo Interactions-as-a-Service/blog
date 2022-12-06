@@ -1,7 +1,7 @@
 ---
-import Layout from './Page.astro';
-import Container from '../components/Container.astro';
-import { formatDate, slugify } from '../utils/helpers';
+import Layout from "./Page.astro";
+import Container from "../components/Container.astro";
+import { formatDate, slugify } from "../utils/helpers";
 
 const { frontmatter } = Astro.props;
 
@@ -19,7 +19,7 @@ const seo = {
 				{
 					frontmatter.category && (
 						<div>
-							{frontmatter.category.split(',').map((x) => (
+							{frontmatter.category.split(",").map((x) => (
 								<p class="post-content__category">
 									<a href={`/blog/category/${slugify(x.trim())}`}>{x.trim()}</a>
 								</p>

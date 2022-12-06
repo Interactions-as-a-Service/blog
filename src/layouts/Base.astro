@@ -1,9 +1,9 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import type { Props as BaseHeadProps } from '../components/BaseHead.astro';
-import CreateCopyCodeButtons from '../components/CodeButtons/CreateCopyCodeButtons.astro';
+import BaseHead from "../components/BaseHead.astro";
+import type { Props as BaseHeadProps } from "../components/BaseHead.astro";
+import CreateCopyCodeButtons from "../components/CodeButtons/CreateCopyCodeButtons.astro";
 // import FadeIn from "../components/FadeIn.astro";
-import ThemeProvider from '../components/ThemeToggleButton/ThemeProvider.astro';
+import ThemeProvider from "../components/ThemeToggleButton/ThemeProvider.astro";
 
 export interface Props {
 	seo?: BaseHeadProps;
@@ -20,7 +20,7 @@ const { seo } = Astro.props;
 		<!-- <FadeIn/> -->
 		<CreateCopyCodeButtons />
 		<script>
-			import '../components/CodeButtons/copy-code-button';
+			import "../components/CodeButtons/copy-code-button";
 		</script>
 	</head>
 	<body>
